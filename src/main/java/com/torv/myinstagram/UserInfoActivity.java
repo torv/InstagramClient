@@ -9,9 +9,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 
 public class UserInfoActivity extends Activity {
@@ -20,6 +22,9 @@ public class UserInfoActivity extends Activity {
     private NetworkImageView mNIHeader;
     private TextView mTvFollows;
     private TextView mTvFollowBy;
+    private TextView mTvMediaCount;
+    private TextView mTvBio;
+    private TextView mTvWebsite;
 
     private InstagramUser user;
 
@@ -34,36 +39,41 @@ public class UserInfoActivity extends Activity {
         mTvUserName = (TextView) findViewById(R.id.tv_username);
         mTvFollows = (TextView)findViewById(R.id.tv_follows);
         mTvFollowBy = (TextView)findViewById(R.id.tv_followed_by);
+        mTvMediaCount = (TextView)findViewById(R.id.tv_media_count);
+        mTvBio = (TextView)findViewById(R.id.tv_bio);
+        mTvWebsite = (TextView)findViewById(R.id.tv_website);
 
         initUser();
 
         updateUI();
 
-        requestUserInfo();
     }
 
     private void updateUI() {
 
         mTvUserName.setText(user.name);
+        mTvFollowBy.setText("Followed by:"+user.followed_by);
+        mTvFollows.setText("Follows:"+user.follows);
+        mTvBio.setText("Bio:"+user.bio);
+        mTvMediaCount.setText("Media:"+user.media_count);
+        mTvWebsite.setText("Website:"+user.website);
 
         mNIHeader.setImageUrl(user.imageUrl, VolleyInstance.getInstance(this).getImageLoader());
     }
 
     private void initUser() {
-        user = new InstagramUser();
-        try {
-            JSONObject jsonObject = new JSONObject(SPInstance.getInstance(this).getSP().getString(JConstant.SP_KEY_ACCESS_TOKEN_JSON, null));
-            access_token = jsonObject.getString("access_token");
-            JSONObject userJson = jsonObject.getJSONObject("user");
 
-            user.id = userJson.getString("id");
-            user.name = userJson.getString("username");
-            user.full_name = userJson.getString("full_name");
-            user.imageUrl = userJson.getString("profile_picture");
+        access_token = SPInstance.getInstance(this).getSP().getString(JConstant.SP_KEY_ACCESS_TOKEN, null);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+        String userString = SPInstance.getInstance(this).getSP().getString(JConstant.SP_KEY_INSTAGRAM_USER, null);
+        if(null != userString){
+            Gson gson = new Gson();
+            user = gson.fromJson(userString, InstagramUser.class);
+        }else {
+            user = new InstagramUser();
         }
+
+        requestUserInfo();
     }
 
     public void requestUserInfo(){
@@ -92,12 +102,23 @@ public class UserInfoActivity extends Activity {
         try {
             Log.e("torv", "handleUserInfo");
             JSONObject json = jsonObject.getJSONObject("data");
-            JSONObject counts = json.getJSONObject("counts");
+            user.id = json.getString("id");
+            user.name = json.getString("username");
+            user.full_name = json.getString("full_name");
+            user.imageUrl = json.getString("profile_picture");
+            user.bio = json.getString("bio");
+            user.website = json.getString("website");
 
+            JSONObject counts = json.getJSONObject("counts");
+            user.media_count = counts.getInt("media");
             user.followed_by = counts.getInt("followed_by");
             user.follows = counts.getInt("follows");
-            mTvFollowBy.setText("Followed by:"+user.followed_by);
-            mTvFollows.setText("Follows:"+user.follows);
+
+            Gson gson = new Gson();
+            String userString = gson.toJson(user);
+            SPInstance.getInstance(this).getSP().edit().putString(JConstant.SP_KEY_INSTAGRAM_USER,userString).commit();
+
+            updateUI();
 
         } catch (JSONException e) {
             e.printStackTrace();

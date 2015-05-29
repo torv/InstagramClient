@@ -13,5 +13,6 @@ public class JConstant {
     public static final String CLIENT_AUTH_URL = "https://instagram.com/oauth/authorize/?";
 
     //sp key
-    public static final String SP_KEY_ACCESS_TOKEN_JSON = "sp_key_access_token_json";
+    public static final String SP_KEY_ACCESS_TOKEN = "sp_key_access_token";
+    public static final String SP_KEY_INSTAGRAM_USER = "sp_key_instagram_user";
 }

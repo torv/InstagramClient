@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class MainActivity extends Activity {
 
         Log.e("torv", "onCreate");
 
-        if(SPInstance.getInstance(this).getSP().getString(JConstant.SP_KEY_ACCESS_TOKEN_JSON, null) != null){
+        if(SPInstance.getInstance(this).getSP().getString(JConstant.SP_KEY_ACCESS_TOKEN, null) != null){
             gotoMainPage();
             return;
         }
@@ -151,7 +152,26 @@ public class MainActivity extends Activity {
 
     private void handleAccessToken(JSONObject jsonObject){
 
-        SPInstance.getInstance(this).getSP().edit().putString(JConstant.SP_KEY_ACCESS_TOKEN_JSON, jsonObject.toString()).commit();
+        try {
+            String access_token = jsonObject.getString("access_token");
+            SPInstance.getInstance(this).getSP().edit().putString(JConstant.SP_KEY_ACCESS_TOKEN, access_token).commit();
+
+            JSONObject userJson = jsonObject.getJSONObject("user");
+            InstagramUser user = new InstagramUser();
+
+            user.id = userJson.getString("id");
+            user.name = userJson.getString("username");
+            user.full_name = userJson.getString("full_name");
+            user.imageUrl = userJson.getString("profile_picture");
+
+            Gson gson = new Gson();
+            String userString =  gson.toJson(user);
+            SPInstance.getInstance(this).getSP().edit().putString(JConstant.SP_KEY_INSTAGRAM_USER, userString).commit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
         gotoMainPage();
     }
 

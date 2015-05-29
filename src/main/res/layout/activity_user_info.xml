@@ -34,4 +34,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/tv_bio"
+        android:layout_below="@id/tv_followed_by"
+        android:text="Bio:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_website"
+        android:layout_below="@id/tv_bio"
+        android:text="Website:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_media_count"
+        android:layout_below="@id/tv_website"
+        android:text="Media:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </RelativeLayout>
