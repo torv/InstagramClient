@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -43,7 +45,7 @@ public class MainActivity extends Activity {
         }
 
         setupWebView();
-        startServerAuth();
+        startClientAuth();
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -98,6 +100,10 @@ public class MainActivity extends Activity {
                 } else if (url.contains("error")) {
 
                     Log.e("torv", "error:" + temp[1]);
+                } else if(url.contains("access_token")){
+                    Log.e("torv", "access_token:" + temp[1]);
+                    SP.instance.mSharedPreferences.edit().putString(JConstant.SP_KEY_ACCESS_TOKEN, temp[1]).commit();
+                    gotoMainPage();
                 }
                 return true;
             }
@@ -171,7 +177,6 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-
         gotoMainPage();
     }
 
@@ -179,5 +184,15 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //if load error, ex. "Implicit authentication is disabled", always show load error page.
+        CookieSyncManager.createInstance(this);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeAllCookie();
     }
 }

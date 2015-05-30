@@ -59,8 +59,6 @@ public class UserInfoActivity extends Activity {
 
         initUser();
 
-        updateUI();
-
     }
 
     private void handleLogout() {
@@ -100,6 +98,8 @@ public class UserInfoActivity extends Activity {
         }else {
             user = new InstagramUser();
         }
+
+        updateUI();
 
         requestUserInfo();
     }
