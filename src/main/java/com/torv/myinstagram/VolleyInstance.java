@@ -11,25 +11,16 @@ import com.android.volley.toolbox.Volley;
 /**
  * Created by lijian on 5/29/15.
  */
-public class VolleyInstance {
+public enum VolleyInstance {
 
-    private static VolleyInstance instance;
+    instance;
 
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
-    private static Context mContext;
+    private Context mContext;
 
-    public static synchronized VolleyInstance getInstance(Context context){
-        if(null == instance){
-            instance = new VolleyInstance(context);
-        }
-
-        return instance;
-    }
-
-    private VolleyInstance(Context context) {
+    public void init(Context context){
         mContext = context;
-
         mRequestQueue = getRequestQueue();
 
         mImageLoader = new ImageLoader(mRequestQueue,
@@ -48,7 +39,7 @@ public class VolleyInstance {
                 });
     }
 
-    public RequestQueue getRequestQueue(){
+    private RequestQueue getRequestQueue(){
         if(null == mRequestQueue){
             mRequestQueue = Volley.newRequestQueue(mContext.getApplicationContext());
         }

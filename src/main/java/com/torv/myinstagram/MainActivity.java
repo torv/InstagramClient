@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
 
         Log.e("torv", "onCreate");
 
-        if(SPInstance.getInstance(this).getSP().getString(JConstant.SP_KEY_ACCESS_TOKEN, null) != null){
+        if(SP.instance.mSharedPreferences.getString(JConstant.SP_KEY_ACCESS_TOKEN, null) != null){
             gotoMainPage();
             return;
         }
@@ -147,14 +147,14 @@ public class MainActivity extends Activity {
         }, map);
 
         request.setTag("jsObjRequest");
-        VolleyInstance.getInstance(this).addToRequestQueue(request);
+        VolleyInstance.instance.addToRequestQueue(request);
     }
 
     private void handleAccessToken(JSONObject jsonObject){
 
         try {
             String access_token = jsonObject.getString("access_token");
-            SPInstance.getInstance(this).getSP().edit().putString(JConstant.SP_KEY_ACCESS_TOKEN, access_token).commit();
+            SP.instance.mSharedPreferences.edit().putString(JConstant.SP_KEY_ACCESS_TOKEN, access_token).commit();
 
             JSONObject userJson = jsonObject.getJSONObject("user");
             InstagramUser user = new InstagramUser();
@@ -166,7 +166,7 @@ public class MainActivity extends Activity {
 
             Gson gson = new Gson();
             String userString =  gson.toJson(user);
-            SPInstance.getInstance(this).getSP().edit().putString(JConstant.SP_KEY_INSTAGRAM_USER, userString).commit();
+            SP.instance.mSharedPreferences.edit().putString(JConstant.SP_KEY_INSTAGRAM_USER, userString).commit();
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -13,7 +13,6 @@ import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 
 public class UserInfoActivity extends Activity {
@@ -58,14 +57,14 @@ public class UserInfoActivity extends Activity {
         mTvMediaCount.setText("Media:"+user.media_count);
         mTvWebsite.setText("Website:"+user.website);
 
-        mNIHeader.setImageUrl(user.imageUrl, VolleyInstance.getInstance(this).getImageLoader());
+        mNIHeader.setImageUrl(user.imageUrl, VolleyInstance.instance.getImageLoader());
     }
 
     private void initUser() {
 
-        access_token = SPInstance.getInstance(this).getSP().getString(JConstant.SP_KEY_ACCESS_TOKEN, null);
+        access_token = SP.instance.mSharedPreferences.getString(JConstant.SP_KEY_ACCESS_TOKEN, null);
 
-        String userString = SPInstance.getInstance(this).getSP().getString(JConstant.SP_KEY_INSTAGRAM_USER, null);
+        String userString = SP.instance.mSharedPreferences.getString(JConstant.SP_KEY_INSTAGRAM_USER, null);
         if(null != userString){
             Gson gson = new Gson();
             user = gson.fromJson(userString, InstagramUser.class);
@@ -94,7 +93,7 @@ public class UserInfoActivity extends Activity {
         });
 
         jsonObjectRequest.setTag("/users/");
-        VolleyInstance.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        VolleyInstance.instance.addToRequestQueue(jsonObjectRequest);
     }
 
     private void handleUserInfoJson(JSONObject jsonObject) {
@@ -116,7 +115,7 @@ public class UserInfoActivity extends Activity {
 
             Gson gson = new Gson();
             String userString = gson.toJson(user);
-            SPInstance.getInstance(this).getSP().edit().putString(JConstant.SP_KEY_INSTAGRAM_USER,userString).commit();
+            SP.instance.mSharedPreferences.edit().putString(JConstant.SP_KEY_INSTAGRAM_USER,userString).commit();
 
             updateUI();
 

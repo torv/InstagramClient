@@ -2,6 +2,11 @@ package com.torv.myinstagram;
 
 public class JConstant {
 
+    //Suppress default constructor for non instantiability.
+    private JConstant(){
+        throw new AssertionError();
+    }
+
     public static final String CLIENT_ID = "";
     public static final String CLIENT_SECRET = "";
     public static final String REDIRECT_URL = "";
