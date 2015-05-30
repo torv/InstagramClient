@@ -1,8 +1,13 @@
 package com.torv.myinstagram;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -29,6 +34,8 @@ public class UserInfoActivity extends Activity {
 
     private String access_token;
 
+    private Button mBtnLogout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,10 +49,32 @@ public class UserInfoActivity extends Activity {
         mTvBio = (TextView)findViewById(R.id.tv_bio);
         mTvWebsite = (TextView)findViewById(R.id.tv_website);
 
+        mBtnLogout = (Button)findViewById(R.id.btn_logout);
+        mBtnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleLogout();
+            }
+        });
+
         initUser();
 
         updateUI();
 
+    }
+
+    private void handleLogout() {
+
+        CookieSyncManager.createInstance(this);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeAllCookie();
+
+        SP.instance.mSharedPreferences.edit().putString(JConstant.SP_KEY_INSTAGRAM_USER, null).commit();
+        SP.instance.mSharedPreferences.edit().putString(JConstant.SP_KEY_ACCESS_TOKEN, null).commit();
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void updateUI() {
@@ -124,4 +153,10 @@ public class UserInfoActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("torv", "onDestroy");
+
+    }
 }
