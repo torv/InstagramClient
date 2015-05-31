@@ -20,4 +20,5 @@ public class JConstant {
     //sp key
     public static final String SP_KEY_ACCESS_TOKEN = "sp_key_access_token";
     public static final String SP_KEY_INSTAGRAM_USER = "sp_key_instagram_user";
+    public static final String SP_KEY_MEDIA_LIST = "sp_key_media_list";
 }

@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
         }
 
         setupWebView();
-        startClientAuth();
+        startServerAuth();
     }
 
     @SuppressLint("SetJavaScriptEnabled")
