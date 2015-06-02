@@ -19,6 +19,7 @@ public class GridMediaAdapter extends BaseAdapter{
     List<String> mUrlList;
 
     public GridMediaAdapter(Context context, List<String> urlList) {
+        super();
         mInflater = LayoutInflater.from(context);
         mUrlList = urlList;
     }

@@ -109,6 +109,13 @@ public class UserInfoActivity extends Activity {
         requestMediaInfo();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        requestUserInfo();
+        requestMediaInfo();
+    }
+
     public void requestUserInfo() {
 
         String url = "https://api.instagram.com/v1/users/self/?access_token=" + access_token;
